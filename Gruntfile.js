@@ -5,17 +5,20 @@ module.exports = function(grunt){
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     watch: {
+      options: {
+        livereload: true
+      },
       html: {
-          files: ['src/index.html'],
-          tasks: ['htmlhint']
+          files: ['app/index.html'],
+          //tasks: ['htmlhint']
       },
       js: {
-        files: ['src/js/app.js'],
-        tasks: ['uglify']
+        files: ['app/src/js/app.js'],
+        //tasks: ['uglify']
       },
       css: {
-        files: ['src/styles/**/*.scss'],
-        tasks: ['buildcss']
+        files: ['app/src/styles/**/*.scss'],
+        //tasks: ['buildcss']
       }
     },
 
@@ -24,7 +27,7 @@ module.exports = function(grunt){
     uglify: {
       build: {
         files: {
-          'build/js/app.min.js': ['src/js/app.js']
+          'app/build/js/app.min.js': ['app/src/js/app.js']
         }
       }
     },
@@ -58,25 +61,60 @@ module.exports = function(grunt){
           consolidateMediaQueries:    true
         },
         files: {
-          'build/css/master.css': 'build/css/master.css'
+          'app/build/css/master.css': 'app/build/css/master.css'
         }
       }
     },
     cssmin: {
       build: {
-        src: 'build/css/master.css',
-        dest: 'build/css/master.css'
+        src: 'app/build/css/master.css',
+        dest: 'app/build/css/master.css'
       }
     },
     sass: {
       build: {
           files: {
-            'build/css/master.css': 'src/styles/master.scss'
+            'app/build/css/master.css': 'app/src/styles/master.scss'
           }
       }
+    },
+
+    //LOGISTICS
+    // grunt-express will serve the files from the folders listed in `bases`
+    // on specified `port` and `hostname`
+    express: {
+      all: {
+        options: {
+          port: 9000,
+          hostname: "0.0.0.0",
+          bases: ['app'], // Replace with the directory you want the files served from
+                             // Make sure you don't use `.` or `..` in the path as Express
+                             // is likely to return 403 Forbidden responses if you do
+                             // http://stackoverflow.com/questions/14594121/express-res-sendfile-throwing-forbidden-error
+          livereload: true
+        }
+      }
+    },
+    // grunt-open will open your browser at the project's URL
+    open: {
+      all: {
+        // Gets the port from the connect configuration
+        path: 'http://localhost:<%= express.all.options.port%>'
+      }
     }
+
   });
 
   grunt.registerTask('default', []);
   grunt.registerTask('buildcss',  ['sass', 'cssc', 'cssmin']);
+  grunt.registerTask('buildjs',   ['uglify']);
+  grunt.registerTask('buildall',  ['sass', 'cssc', 'cssmin', 'uglify']);
+
+
+  // Creates the `server` task
+  grunt.registerTask('serve', [
+    'express',
+    'open',
+    'watch'
+  ]);
 };
