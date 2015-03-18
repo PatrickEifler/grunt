@@ -1,24 +1,33 @@
+var config = {
+  app: 'app/src',
+  dist: 'app/build'
+};
+
+
 module.exports = function(grunt){
 
   require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
 
   grunt.initConfig({
+
+    //CONFIG
+    config: config,
     pkg: grunt.file.readJSON('package.json'),
+
+
+    //WATCH
     watch: {
       options: {
         livereload: true
       },
       html: {
           files: ['app/index.html'],
-          //tasks: ['htmlhint']
       },
       js: {
         files: ['app/src/js/app.js'],
-        //tasks: ['uglify']
       },
       css: {
         files: ['app/src/styles/**/*.scss'],
-        //tasks: ['buildcss']
       }
     },
 
@@ -87,18 +96,13 @@ module.exports = function(grunt){
         options: {
           port: 9000,
           hostname: "0.0.0.0",
-          bases: ['app'], // Replace with the directory you want the files served from
-                             // Make sure you don't use `.` or `..` in the path as Express
-                             // is likely to return 403 Forbidden responses if you do
-                             // http://stackoverflow.com/questions/14594121/express-res-sendfile-throwing-forbidden-error
+          bases: ['app'],
           livereload: true
         }
       }
     },
-    // grunt-open will open your browser at the project's URL
     open: {
       all: {
-        // Gets the port from the connect configuration
         path: 'http://localhost:<%= express.all.options.port%>'
       }
     }
@@ -106,12 +110,14 @@ module.exports = function(grunt){
   });
 
   grunt.registerTask('default', []);
+
+  //BUILD
   grunt.registerTask('buildcss',  ['sass', 'cssc', 'cssmin']);
   grunt.registerTask('buildjs',   ['uglify']);
   grunt.registerTask('buildall',  ['sass', 'cssc', 'cssmin', 'uglify']);
 
 
-  // Creates the `server` task
+  //SERVE (livereload enabled)
   grunt.registerTask('serve', [
     'express',
     'open',
