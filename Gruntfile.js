@@ -13,7 +13,7 @@ module.exports = function(grunt){
     //CONFIG
     config: config,
     pkg: grunt.file.readJSON('package.json'),
-
+    bower: grunt.file.readJSON('./.bowerrc'),
 
     //WATCH
     watch: {
@@ -33,10 +33,19 @@ module.exports = function(grunt){
 
     //JS
 
+    //CONCAT LIB
+    bower_concat: {
+      all: {
+        dest: 'app/src/js/lib.js'
+      }
+    },
+
+    //MINIFY
     uglify: {
       build: {
         files: {
-          'app/build/js/app.min.js': ['app/src/js/app.js']
+          'app/build/js/app.min.js': ['app/src/js/app.js'],
+          'app/build/js/lib.min.js': ['app/src/js/lib.js']
         }
       }
     },
