@@ -15,6 +15,7 @@ module.exports = function(grunt){
     pkg: grunt.file.readJSON('package.json'),
     bower: grunt.file.readJSON('./.bowerrc'),
 
+
     //WATCH
     watch: {
       options: {
@@ -31,10 +32,10 @@ module.exports = function(grunt){
       }
     },
 
+
     //JS
 
     //CONCAT LIB
-
     bower_concat: {
       all: {
         dest: 'app/src/js/lib.js'
@@ -42,7 +43,6 @@ module.exports = function(grunt){
     },
 
     //MINIFY
-
     uglify: {
       build: {
         files: {
@@ -59,6 +59,7 @@ module.exports = function(grunt){
         }
       }
     },
+
 
     //HTML
 
@@ -78,6 +79,7 @@ module.exports = function(grunt){
         src: ['src/index.html']
       }
     },
+
 
     //CSS
 
@@ -107,6 +109,7 @@ module.exports = function(grunt){
       }
     },
 
+
     //LOGISTICS
     // grunt-express will serve the files from the folders listed in `bases`
     // on specified `port` and `hostname`
@@ -125,6 +128,7 @@ module.exports = function(grunt){
         path: 'http://localhost:<%= express.all.options.port%>'
       }
     },
+
 
     //SHELL
     shell: {
