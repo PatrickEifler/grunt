@@ -34,6 +34,7 @@ module.exports = function(grunt){
     //JS
 
     //CONCAT LIB
+
     bower_concat: {
       all: {
         dest: 'app/src/js/lib.js'
@@ -41,10 +42,19 @@ module.exports = function(grunt){
     },
 
     //MINIFY
+
     uglify: {
       build: {
         files: {
-          'app/build/js/app.min.js': ['app/src/js/app.js'],
+          'app/build/js/app.min.js': ['app/src/js/app.js']
+        }
+      },
+      bower: {
+        options: {
+          mangle: true,
+          compress: true
+        },
+        files: {
           'app/build/js/lib.min.js': ['app/src/js/lib.js']
         }
       }
@@ -114,6 +124,20 @@ module.exports = function(grunt){
       all: {
         path: 'http://localhost:<%= express.all.options.port%>'
       }
+    },
+
+    //SHELL
+    shell: {
+      bowerinstall: {
+        command: function(libname){
+          return 'bower install ' + libname + ' --save';
+        }
+      },
+      bowerupdate: {
+        command: function(libname){
+          return 'bower update ' + libname;
+        }
+      }
     }
 
   });
@@ -121,10 +145,20 @@ module.exports = function(grunt){
   grunt.registerTask('default', []);
 
   //BUILD
-  grunt.registerTask('buildcss',  ['sass', 'cssc', 'cssmin']);
-  grunt.registerTask('buildjs',   ['uglify']);
-  grunt.registerTask('buildall',  ['sass', 'cssc', 'cssmin', 'uglify']);
+  grunt.registerTask('buildcss',    ['sass', 'cssc', 'cssmin']);
+  grunt.registerTask('buildjs',     ['uglify']);
+  grunt.registerTask('buildall',    ['sass', 'cssc', 'cssmin', 'uglify', 'uglify:bower']);
+  grunt.registerTask('buildbower',  ['bower_concat','uglify:bower']);
 
+  //BOWER TASKS
+  grunt.registerTask('bowerinstall', function(library) {
+    grunt.task.run('shell:bowerinstall:' + library);
+    grunt.task.run('buildbower');
+  });
+  grunt.registerTask('bowerupdate', function(library) {
+    grunt.task.run('shell:bowerupdate:' + library);
+    grunt.task.run('buildbower');
+  });
 
   //SERVE (livereload enabled)
   grunt.registerTask('serve', [
